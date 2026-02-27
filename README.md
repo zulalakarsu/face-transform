@@ -156,27 +156,27 @@ This is exactly what the assignment asks for: **a text-to-image model, trained o
 - Welcome interface with app introduction
 - **"Take a Photo"** button to start the process
 - **"View History"** to see past generations
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/0b0f1f34-8291-42d3-97d1-29e530363be1" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/0b0f1f34-8291-42d3-97d1-29e530363be1" />
 
 ### 2. Camera Screen  
 - Capture 5+ photos of your face from different angles
 - Real-time face detection and guidance
 - Photo validation and cropping
 - **"Continue to Training"** when ready
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/340db3ca-3df9-49b1-8171-446272f54943" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/340db3ca-3df9-49b1-8171-446272f54943" />
 
 ### 3. Training Screen
 - Upload photos to backend (base64 encoded)
 - Real-time training progress (3-5 minutes)
 - **"Training completed!"** → auto-navigate to selection
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/5d1c948a-9569-48d2-b449-056dbca9ec4d" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/5d1c948a-9569-48d2-b449-056dbca9ec4d" />
 
 ### 4. Transformation Selection
 - **Body Types**: Muscular, Slim, Heavy
 - **Age Types**: Youthful (18-22), Elderly (75+)
 - **Custom Prompt**: Free-form text input
 - **"Generate Transformation"** button
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/7538d1eb-fb3b-4452-9cd3-dc92f8a81a81" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/7538d1eb-fb3b-4452-9cd3-dc92f8a81a81" />
 
 ### 5. Results Screen
 - Display generated AI image
@@ -185,13 +185,13 @@ This is exactly what the assignment asks for: **a text-to-image model, trained o
 - **"Share"** via system share sheet
 - **"Try Another Type"** (keeps trained model)
 - **"Regenerate"** (new seed, same prompt)
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/85157426-a00f-496c-a832-90a21ea531cb" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/85157426-a00f-496c-a832-90a21ea531cb" />
 
 ### 6. History Screen
 - Grid view of past generations
 - Tap to view full results again
 - Delete individual items or clear all
-<img width="660" height="1434" alt="Image" src="https://github.com/user-attachments/assets/0826033e-da0d-4b2b-9579-7284c18dec05" />
+<img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/0826033e-da0d-4b2b-9579-7284c18dec05" />
 
 ## 🤖 AI Implementation Details
 
