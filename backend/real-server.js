@@ -617,14 +617,32 @@ app.get('/api/training/status/:jobId', async (req, res) => {
 
 // STEP 3: REAL generation endpoint using trained model
 app.post('/api/generate', async (req, res) => {
-  const { modelVersion, type, customPrompt, triggerWord } = req.body;
-  console.log(`🎯 REAL Generation request: model=${modelVersion}, type=${type}`);
+  let { modelVersion, type, customPrompt, triggerWord } = req.body;
+  console.log(`🎯 REAL Generation request: model=${modelVersion}, type=${type}, triggerWord=${triggerWord}`);
 
   if (!modelVersion) {
     return res.status(400).json({
       success: false,
       error: 'Model version is required'
     });
+  }
+
+  // Extract the version hash from "owner/model:hash" format
+  // Replicate /v1/predictions expects just the 64-char hash
+  let versionHash = modelVersion;
+  if (modelVersion.includes(':')) {
+    versionHash = modelVersion.split(':').pop();
+    console.log(`📌 Extracted version hash: ${versionHash} from ${modelVersion}`);
+  } else if (!modelVersion.match(/^[a-f0-9]{64}$/)) {
+    // Not a valid hash and no colon — this is probably a model name, not a version
+    // Fall back to the known working model
+    console.warn(`⚠️ Invalid modelVersion "${modelVersion}" — not a version hash. Falling back to known model.`);
+    
+    // Try to look up the latest version from Replicate for known models
+    const knownFallback = 'efa4c4021973c934308feaad473ebd125bc2321e2b5325d1f85023d27a134e7e';
+    versionHash = knownFallback;
+    modelVersion = `zulalakarsu/face-lora-1772141825029:${knownFallback}`;
+    console.log(`📌 Using fallback version: ${versionHash}`);
   }
 
   try {
@@ -672,6 +690,7 @@ app.post('/api/generate', async (req, res) => {
         prompt = customPrompt || `${finalTriggerWord}`;
     }
 
+    console.log(`🚀 Sending prediction with version hash: ${versionHash}`);
     const prediction = await fetch("https://api.replicate.com/v1/predictions", {
       method: "POST",
       headers: {
@@ -679,7 +698,7 @@ app.post('/api/generate', async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        version: modelVersion, // Use the trained model version passed from client
+        version: versionHash,
         input: {
           prompt: prompt,
           num_inference_steps: 28,

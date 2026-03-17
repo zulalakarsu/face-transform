@@ -6,14 +6,12 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
-  ActivityIndicator,
   SafeAreaView,
   TextInput,
   Animated,
   Image,
 } from 'react-native';
 import useAppStore from '../stores/appStore';
-import apiService from '../services/api';
 
 interface Props {
   navigation: {
@@ -85,19 +83,14 @@ const SUGGESTION_CHIPS = [
 export default function EditorScreen({ navigation, route }: Props) {
   const { 
     hasTrainedModel, 
-    isGenerating,
-    setGenerating,
-    setGenerationResult,
-    setGenerationError,
-    addToHistory,
     getActiveModel,
+    addGenerationRequest,
   } = useAppStore();
 
   const [customPrompt, setCustomPrompt] = useState('');
   const [selectedChip, setSelectedChip] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const shakeAnimation = useRef(new Animated.Value(0)).current;
-  const pulseAnimation = useRef(new Animated.Value(1)).current;
 
   const handleCustomPromptChange = (text: string) => {
     setCustomPrompt(text);
@@ -118,23 +111,8 @@ export default function EditorScreen({ navigation, route }: Props) {
     ]).start();
   };
 
-  const startPulseAnimation = () => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnimation, { toValue: 0.8, duration: 800, useNativeDriver: true }),
-        Animated.timing(pulseAnimation, { toValue: 1, duration: 800, useNativeDriver: true }),
-      ])
-    ).start();
-  };
 
-  const stopPulseAnimation = () => {
-    pulseAnimation.stopAnimation();
-    pulseAnimation.setValue(1);
-  };
-
-  const handleGenerate = async () => {
-    console.log('🎬 Generate button pressed!', { customPrompt: customPrompt.trim(), length: customPrompt.trim().length });
-    
+  const handleGenerate = () => {
     if (!customPrompt.trim()) {
       shakeInput();
       Alert.alert('Error', 'Describe what you want to see');
@@ -153,69 +131,24 @@ export default function EditorScreen({ navigation, route }: Props) {
       return;
     }
 
-    console.log('🚀 Starting generation with loading state...');
-    setGenerating(true);
-    setGenerationError(null);
-    startPulseAnimation();
-    console.log('✅ Loading state should now be visible!');
-
-    try {
-      // Get the active model
-      const activeModel = getActiveModel();
-      if (!activeModel) {
-        Alert.alert('Error', 'No active model found. Please select a model in Settings.');
-        setGenerating(false);
-        stopPulseAnimation();
-        return;
-      }
-
-      const result = await apiService.generateTransformation(
-        activeModel.modelVersion,
-        'custom',
-        customPrompt.trim(),
-        activeModel.triggerWord
-      );
-
-      const historyItem = {
-        type: 'custom' as any,
-        localUri: result.localUri || result.imageUrl,
-        imageUrl: result.imageUrl,
-        seed: result.seed,
-      };
-
-      addToHistory(historyItem);
-      setGenerationResult({
-        imageUrl: result.imageUrl,
-        localUri: result.localUri || result.imageUrl,
-        type: result.type,
-        seed: result.seed,
-      });
-
-      navigation.navigate('Results', {
-        imageUrl: result.imageUrl,
-        type: 'custom',
-        seed: result.seed,
-        requestId: result.requestId,
-        localUri: result.localUri,
-        prompt: result.prompt,
-      });
-    } catch (error: any) {
-      console.error('Generation error:', error);
-      setGenerationError(error.message || 'Failed to generate transformation');
-      Alert.alert(
-        'Generation Failed',
-        error.message || 'Failed to generate transformation. Please try again.',
-        [{ text: 'OK' }]
-      );
-    } finally {
-      setGenerating(false);
-      stopPulseAnimation();
+    const activeModel = getActiveModel();
+    if (!activeModel) {
+      Alert.alert('Error', 'No active model found. Please select a model in Settings.');
+      return;
     }
+
+    const requestId = addGenerationRequest({
+      prompt: customPrompt.trim(),
+      chipLabel: selectedChip || undefined,
+      modelVersion: activeModel.modelVersion,
+      modelName: activeModel.name,
+      triggerWord: activeModel.triggerWord,
+    });
+
+    navigation.navigate('Generating', { newRequestId: requestId });
   };
 
   const activeModel = getActiveModel();
-
-  console.log('🔄 EditorScreen render - isGenerating:', isGenerating);
 
   return (
     <View style={styles.container}>
@@ -317,27 +250,17 @@ export default function EditorScreen({ navigation, route }: Props) {
 
         {/* Generate button */}
         <View style={styles.bottomBar}>
-          <Animated.View style={isGenerating ? { transform: [{ scale: pulseAnimation }] } : {}}>
-            <TouchableOpacity
-              style={[
-                styles.generateButton, 
-                isGenerating && styles.generatingButton,
-                (!hasTrainedModel() || !customPrompt.trim()) && !isGenerating && styles.disabledButton
-              ]}
-              onPress={handleGenerate}
-              disabled={isGenerating || !hasTrainedModel() || !customPrompt.trim()}
-              activeOpacity={isGenerating ? 1 : 0.8}
-            >
-              {isGenerating ? (
-                <View style={styles.generatingContent}>
-                  <ActivityIndicator color="white" size="small" style={styles.loadingSpinner} />
-                  <Text style={styles.generatingText}>Generating...</Text>
-                </View>
-              ) : (
-                <Text style={styles.generateButtonText}>Generate Transformation</Text>
-              )}
-            </TouchableOpacity>
-          </Animated.View>
+          <TouchableOpacity
+            style={[
+              styles.generateButton, 
+              (!hasTrainedModel() || !customPrompt.trim()) && styles.disabledButton
+            ]}
+            onPress={handleGenerate}
+            disabled={!hasTrainedModel() || !customPrompt.trim()}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.generateButtonText}>Generate Transformation</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
@@ -481,23 +404,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   generateButtonText: {
-    color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '700',
-  },
-  generatingButton: {
-    backgroundColor: '#FF6B6D',
-    opacity: 0.8,
-  },
-  generatingContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingSpinner: {
-    marginRight: 12,
-  },
-  generatingText: {
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: '700',

@@ -30,6 +30,7 @@ export default function SettingsScreen({ navigation }: Props) {
     updateModelName,
     deleteModel,
     addModel,
+    generationRequests,
   } = useAppStore();
 
   const [expandedModelId, setExpandedModelId] = useState<string | null>(null);
@@ -180,6 +181,33 @@ export default function SettingsScreen({ navigation }: Props) {
         </View>
 
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {/* Generations link */}
+          <TouchableOpacity
+            style={styles.navRow}
+            onPress={() => navigation.navigate('Generating')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.navRowIcon}>✨</Text>
+            <View style={styles.navRowContent}>
+              <Text style={styles.navRowLabel}>Generations</Text>
+              <Text style={styles.navRowSub}>
+                View in-progress &amp; completed images
+              </Text>
+            </View>
+            {generationRequests.filter(
+              (r) => r.status === 'pending' || r.status === 'generating'
+            ).length > 0 && (
+              <View style={styles.navBadge}>
+                <Text style={styles.navBadgeText}>
+                  {generationRequests.filter(
+                    (r) => r.status === 'pending' || r.status === 'generating'
+                  ).length}
+                </Text>
+              </View>
+            )}
+            <Text style={styles.navArrow}>→</Text>
+          </TouchableOpacity>
+
           {/* MY MODELS Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>MY MODELS</Text>
@@ -389,6 +417,50 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     paddingHorizontal: 20,
+  },
+  navRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.07)',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 24,
+    gap: 12,
+  },
+  navRowIcon: {
+    fontSize: 22,
+  },
+  navRowContent: {
+    flex: 1,
+  },
+  navRowLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginBottom: 2,
+  },
+  navRowSub: {
+    fontSize: 12,
+    color: 'rgba(255, 255, 255, 0.4)',
+  },
+  navBadge: {
+    backgroundColor: '#FF4D6D',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 6,
+  },
+  navBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  navArrow: {
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.3)',
+    fontWeight: '600',
   },
   section: {
     marginBottom: 24,

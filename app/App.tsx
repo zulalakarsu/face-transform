@@ -7,7 +7,8 @@ export type RootStackParamList = {
   Home: undefined;
   Camera: { transformType: string };
   Training: { imageUri: string; transformType: string };
-  Editor: { imageUri: string };
+  Editor: { imageUri?: string };
+  Generating: { newRequestId?: string };
   Settings: undefined;
   Results: {
     imageUrl: string;
@@ -26,6 +27,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import CameraScreen from './src/screens/CameraScreen';
 import TrainingScreen from './src/screens/TrainingScreen';
 import EditorScreen from './src/screens/EditorScreen';
+import GeneratingScreen from './src/screens/GeneratingScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import ResultsScreen from './src/screens/ResultsScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
@@ -61,6 +63,7 @@ export default function App() {
         />
         <Stack.Screen name="Training" component={TrainingScreen} />
         <Stack.Screen name="Editor" component={EditorScreen} />
+        <Stack.Screen name="Generating" component={GeneratingScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="Results" component={ResultsScreen} />
         <Stack.Screen name="History" component={HistoryScreen} />

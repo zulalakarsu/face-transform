@@ -65,6 +65,8 @@ This is exactly what the assignment asks for: **a text-to-image model, trained o
 - 💪 **Body Transformations**: Muscular, slim, heavy body types
 - 👴👶 **Age Transformations**: Elderly (75+) and youthful (18-22) portraits  
 - 🎨 **Custom Prompts**: Full text-to-image capability with your trained face
+- ⚡ **Generation Queue**: Fire off multiple generations and track them in real-time
+- 🤖 **Multi-Model Support**: Train multiple face models, switch between them
 - 📱 **Native Mobile**: React Native Expo for iOS/Android
 - 💾 **Local History**: Save and revisit generated images
 - 🔒 **Privacy-First**: Training data stays with Replicate, no face database
@@ -171,23 +173,37 @@ This is exactly what the assignment asks for: **a text-to-image model, trained o
 - **"Training completed!"** → auto-navigate to selection
 <img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/5d1c948a-9569-48d2-b449-056dbca9ec4d" />
 
-### 4. Transformation Selection
-- **Body Types**: Muscular, Slim, Heavy
-- **Age Types**: Youthful (18-22), Elderly (75+)
-- **Custom Prompt**: Free-form text input
+### 4. Editor Screen (Transformation Selection)
+- **Quick-pick suggestion chips**: Muscular, Elderly, Astronaut, Renaissance, Superhero, Magazine Cover, and more
+- **Custom prompt input**: Free-form text with 250 character limit
+- Shows active model at the top with quick link to Settings
 - **"Generate Transformation"** button
 <img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/7538d1eb-fb3b-4452-9cd3-dc92f8a81a81" />
 
-### 5. Results Screen
+### 5. Generating Screen (Generation Queue)
+- **Real-time request tracking**: See all generations as in-progress, completed, or failed
+- Pulsing indicator for active generations with status badges
+- Tap completed results to view them
+- Retry failed generations with one tap
+- Fire off multiple generations in parallel — go back to editor while one runs
+
+### 6. Results Screen
 - Display generated AI image
 - **Before/After** toggle view
 - **"Save to Photos"** button
 - **"Share"** via system share sheet
-- **"Try Another Type"** (keeps trained model)
-- **"Regenerate"** (new seed, same prompt)
+- **"Try Different"** to go back to the editor
 <img width="330" height="717" alt="Image" src="https://github.com/user-attachments/assets/85157426-a00f-496c-a832-90a21ea531cb" />
 
-### 6. History Screen
+### 7. Settings Screen (Model Management)
+- View all trained AI models with trigger words and creation dates
+- **Set active model** — switch between multiple trained faces
+- **Rename** or **delete** models
+- **Sync models** from Replicate to recover any missing ones
+- Quick link to Generations queue with in-progress count badge
+- **"Train New Model"** button to start fresh training
+
+### 8. History Screen
 - Grid view of past generations
 - Tap to view full results again
 - Delete individual items or clear all
