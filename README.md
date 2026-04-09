@@ -2,17 +2,6 @@
 
 A React Native mobile app that trains a personalized AI model on your face photos and generates new images of you with different body types, ages, and styles. Uses Replicate's LoRA fine-tuning for true text-to-image model training.
 
-## ✅ Requirements Compliance
-
-| Requirement | Status | Implementation |
-|------------|--------|----------------|
-| "Create a mobile app (Android or iPhone)" | ✅ | React Native Expo — runs on both iOS and Android |
-| "takes a picture of your face" | ✅ | Camera screen captures 5+ photos of user's face |
-| "lets you make your body muscular, fat, thin" | ✅ | Text prompts generate full-body images with different body types |
-| "old and young" | ✅ | Text prompts generate aged/youthful portraits |
-| "text-to-image model trained along with your face" | ✅ | LoRA fine-tuning via Replicate's flux-dev-lora-trainer — real gradient descent training on your photos |
-| "cannot use a face replication model" | ✅ | No face swapping, no IP-Adapter, no embedding injection. The model learns your face through training, not copying |
-
 ## 🏗️ Architecture
 
 ```
@@ -309,56 +298,6 @@ GET /api/health
 - **Total**: $0.65 for personalized AI model + 10 images
 
 Much cheaper than hiring a photographer or using premium editing apps!
-
-## 🔒 Privacy & Security
-
-### Privacy Protections
-- ✅ **Real AI Training**: Uses actual gradient descent, not face copying
-- ✅ **No Face Database**: No persistent storage of facial data
-- ✅ **User-Controlled**: Only you have access to your trained model  
-- ✅ **Local History**: Generated images stored only on device
-- ✅ **Temporary Processing**: Uploaded photos processed and discarded
-
-### Ethical Guidelines  
-- 🏷️ **Clear AI Labeling**: All generated images marked as AI-created
-- ⚠️ **Misuse Warnings**: App warns about deepfake/impersonation risks
-- 🎯 **Creative Purpose**: Designed for entertainment and artistic use
-- 📚 **Educational**: Demonstrates modern AI training techniques
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Training fails with "Missing content"**
-- ✅ **Fixed**: Now uses base64 encoding instead of direct file upload
-- The backend automatically handles ZIP creation and encoding
-
-**Generation takes too long**  
-- Check internet connection
-- Verify Replicate API credits
-- Model may be cold-starting (first generation after training)
-
-**App won't connect to backend**
-- Ensure backend running on `http://localhost:3000`
-- Check firewall settings
-- Verify REPLICATE_API_TOKEN is set
-
-### Development
-
-**Test backend endpoints:**
-```bash
-# Health check
-curl http://localhost:3000/api/health
-
-# Test training (with real images)
-curl -X POST -F "photos=@face1.jpg" -F "photos=@face2.jpg" -F "photos=@face3.jpg" \
-  http://localhost:3000/api/training/upload
-
-# Test generation (with trained model)  
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"modelVersion":"user/model:hash","type":"muscular"}' \
-  http://localhost:3000/api/generate
-```
 
 ## 📄 License
 
